@@ -1,9 +1,12 @@
 package indexing
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"simple-implementation-mapreduce-invertedindex-v2/common"
+	"sort"
 	"time"
 )
 
@@ -34,14 +37,9 @@ func (c *Collector) Run() {
 	for c.alive {
 		select {
 		case msg := <- c.receiver:
-			switch msg.typ {
-			case msgDismissWorker:
-				fmt.Println("collector dismissed, id: ", c.id)
-				c.idle = true
-				c.alive = false
-
-			case msgCountFreq:
-				job, err := msg.data.(string)
+			switch msg.Typ {
+			case MsgCountFreq:
+				job, err := msg.Data.(string)
 				if !err {
 					fmt.Println("wrong data type")
 					break
@@ -51,36 +49,56 @@ func (c *Collector) Run() {
 				c.countFreq(job)
 				c.setIdle()
 
-			case msgCombineFreq:
-				records, err := msg.data.(common.NativeRecords)
+			case MsgCombineFreq:
+				records, err := msg.Data.(common.NativeRecords)
 				if !err {
 					fmt.Println("wrong data type")
 					break
 				}
-				fmt.Println("collector id: ", c.id, " starts combining frequency from: ", msg.id)
+				fmt.Println("collector id: ", c.id, " starts combining frequency")
 				c.setBusy()
 				c.combineFreq(records)
 				c.setIdle()
 
-			case msgDeliverData:
+			case MsgCurrentStatus:
+				// only make responses if the collector is idle
+				if c.idle {
+					c.sender <- NewMsgCollectorIdle(c.id)
+				}
+
+			case MsgDismissWorker:
+				fmt.Println("collector dismissed, id: ", c.id)
+				c.idle = true
+				c.alive = false
+
+			case MsgDeliverData:
 				fmt.Println("collector id: ", c.id, " starts delivering data")
 				c.setBusy()
-				newMsg := newMsg(c.records, msgCollectorDelivery, c.id)
+				newMsg := NewMsgCollectorDelivery(c.records, c.id)
 				c.sender <- newMsg
 				c.setIdle()
 
-			case msgClearData:
+			case MsgClearData:
 				fmt.Println("collector id: ", c.id, " starts cleaning data")
 				c.setBusy()
 				c.records = common.NewNativeRecords()
 				c.setIdle()
 
-			case msgSortAndSave2Disk:
-				//todo
+			case MsgSortAndSave2Disk:
+				savePath, err := msg.Data.(string)
+				if !err {
+					fmt.Println("wrong data type")
+					break
+				}
+				fmt.Println("collector id: ", c.id, " starts sorting and saving data")
+				c.setBusy()
+				c.sortSave(savePath)
+				c.setIdle()
 
 			default:
-				fmt.Println("unknown message type: ", msg.typ)
+				fmt.Println("unknown message type: ", msg.Typ)
 			}
+
 		case <- time.After(2 * time.Second):
 			continue
 		}
@@ -89,11 +107,11 @@ func (c *Collector) Run() {
 
 func (c *Collector) setBusy() {
 	c.idle = false
-	c.sender <- newMsgCollectorBusy(c.id)
+	//c.sender <- newMsgCollectorBusy(c.id)
 }
 
 func (c *Collector) setIdle() {
-	c.sender <- newMsgCollectorIdle(c.id)
+	c.sender <- NewMsgCollectorIdle(c.id)
 	c.idle = true
 }
 
@@ -138,5 +156,30 @@ func (c *Collector) combineFreq(records common.NativeRecords) {
 		} else {
 			c.records[word] = wordRecord
 		}
+	}
+}
+
+// converts, sorts and saves the records to the disk.
+func (c *Collector) sortSave(savePath string) {
+	records := common.NewRecords()
+	for word, wordRecord := range c.records {
+		tmp := make([]*common.Record, len(wordRecord))
+		index := 0
+		for filename, freq := range wordRecord {
+			tmp[index] = common.NewRecord(filename, freq)
+			index ++
+		}
+		sort.Slice(tmp, func(i, j int) bool {return tmp[i].Freq > tmp[j].Freq})
+		records[word] = tmp
+	}
+
+	b, err := json.Marshal(records)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	err = ioutil.WriteFile(savePath, b, 0644)
+	if err != nil {
+		fmt.Println(err)
 	}
 }

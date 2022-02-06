@@ -1,22 +1,64 @@
 package indexing
 
+import "simple-implementation-mapreduce-invertedindex-v2/common"
+
 // Msg the message for communication between collector and manager.
 type Msg struct {
-	data interface{}    // the data; the real type depends on the typ
-	typ int  		    // the type of the msg
-	id int  			// the id of the sender
+	Data interface{} // the data; the real type depends on the Typ
+	Typ  int         // the type of the msg
+	Id   int         // the id of the sender
 }
 
-func newMsg(data interface{}, typ int, id int) *Msg {
-	return &Msg{data: data, typ: typ, id: id}
+//func NewMsg(data interface{}, Typ int, id int) *Msg {
+//	return &Msg{data: data, Typ: Typ, Id: id}
+//}
+
+// NewMsgCountFreq order from manager to collector to count the word frequency in a certain file.
+func NewMsgCountFreq(filename string, id int) *Msg {
+	return &Msg{Data: filename, Typ: MsgCountFreq, Id: id}
 }
 
-// sends msg from collector to manager to show that it is idle.
-func newMsgCollectorIdle(id int) *Msg {
-	return &Msg{typ: msgCollectorIdle, id: id}
+// NewMsgCombineFreq order from manager to collector to combine records.
+func NewMsgCombineFreq(records common.NativeRecords, id int) *Msg {
+	return &Msg{Data: records, Typ: MsgCombineFreq, Id: id}
 }
 
-// sends msg from collector to manager to show that it is busy.
-func newMsgCollectorBusy(id int) *Msg {
-	return &Msg{typ: msgCollectorBusy, id: id}
+// NewMsgCurrentStatus order from manager to collector to get its current status (idle or not).
+func NewMsgCurrentStatus(id int) *Msg {
+	return &Msg{Typ: MsgCurrentStatus, Id: id}
+}
+
+// NewMsgDismissWorker order from manager to collector to dismiss it.
+func NewMsgDismissWorker(id int) *Msg {
+	return &Msg{Typ: MsgDismissWorker, Id: id}
+}
+
+// NewMsgDeliverData order from manager to collector to deliver its data (records).
+func NewMsgDeliverData(id int) *Msg {
+	return &Msg{Typ: MsgDeliverData, Id: id}
+}
+
+// NewMsgClearData order from manager to collector to clear its data (records).
+func NewMsgClearData(id int) *Msg {
+	return &Msg{Typ: MsgClearData, Id: id}
+}
+
+// NewMsgSortSave2Disk order from manager to collector to sort and save its records on the disk.
+func NewMsgSortSave2Disk(savePath string, id int) *Msg {
+	return &Msg{Data: savePath, Typ: MsgSortAndSave2Disk, Id: id}
+}
+
+// NewMsgCollectorIdle sends msg from collector to manager to show that it is idle.
+func NewMsgCollectorIdle(id int) *Msg {
+	return &Msg{Typ: MsgCollectorIdle, Id: id}
+}
+
+// NewMsgCollectorBusy sends msg from collector to manager to show that it is busy. Currently, not used.
+func NewMsgCollectorBusy(id int) *Msg {
+	return &Msg{Typ: MsgCollectorBusy, Id: id}
+}
+
+// NewMsgCollectorDelivery sends msg from collector to manager to deliver data (records).
+func NewMsgCollectorDelivery(records common.NativeRecords, id int) *Msg {
+	return &Msg{Data: records, Typ: MsgCollectorDelivery, Id: id}
 }
