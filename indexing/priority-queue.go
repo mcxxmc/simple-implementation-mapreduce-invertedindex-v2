@@ -7,7 +7,7 @@ type Record struct {
 
 // PriorityQueue a minimum heap with fixed size.
 //
-// Please use NewPriorityQueue as the safe constructor.
+// Please use NewPriorityQueue() as the safe constructor.
 type PriorityQueue struct {
 	data []*Record
 	size int
@@ -20,7 +20,14 @@ func NewPriorityQueue(size int) *PriorityQueue {
 	}
 }
 
+// ExtractMin extracts the minimum element and returns it as a Record object.
 func (pq *PriorityQueue) ExtractMin() *Record {
 	//todo
 	return nil
+}
+
+// Add adds a new element into the priority queue.
+func (pq *PriorityQueue) Add(key, value int) bool {
+	//todo
+	return true
 }

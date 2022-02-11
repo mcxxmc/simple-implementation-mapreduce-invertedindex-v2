@@ -23,11 +23,6 @@ func NewMsgCombineFreq(records common.NativeRecords, id int) *Msg {
 	return &Msg{Data: records, Typ: MsgCombineFreq, Id: id}
 }
 
-// NewMsgCurrentStatus order from manager to collector to get its current status (idle or not).
-func NewMsgCurrentStatus(id int) *Msg {
-	return &Msg{Typ: MsgCurrentStatus, Id: id}
-}
-
 // NewMsgDismissWorker order from manager to collector to dismiss it.
 func NewMsgDismissWorker(id int) *Msg {
 	return &Msg{Typ: MsgDismissWorker, Id: id}
@@ -51,11 +46,6 @@ func NewMsgSortSave2Disk(savePath string, id int) *Msg {
 // NewMsgCollectorIdle sends msg from collector to manager to show that it is idle.
 func NewMsgCollectorIdle(id int) *Msg {
 	return &Msg{Typ: MsgCollectorIdle, Id: id}
-}
-
-// NewMsgCollectorBusy sends msg from collector to manager to show that it is busy. Currently, not used.
-func NewMsgCollectorBusy(id int) *Msg {
-	return &Msg{Typ: MsgCollectorBusy, Id: id}
 }
 
 // NewMsgCollectorDelivery sends msg from collector to manager to deliver data (records).
