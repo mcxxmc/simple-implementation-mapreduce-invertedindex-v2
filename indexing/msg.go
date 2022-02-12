@@ -43,9 +43,9 @@ func NewMsgSortSave2Disk(savePath string, id int) *Msg {
 	return &Msg{Data: savePath, Typ: MsgSortAndSave2Disk, Id: id}
 }
 
-// NewMsgCollectorIdle sends msg from collector to manager to show that it is idle.
-func NewMsgCollectorIdle(id int) *Msg {
-	return &Msg{Typ: MsgCollectorIdle, Id: id}
+// NewMsgCollectorIOCompleted sends msg from collector to manager to show that it has completed the disk IO operation.
+func NewMsgCollectorIOCompleted(id int) *Msg {
+	return &Msg{Typ: MsgCollectorIOCompleted, Id: id}
 }
 
 // NewMsgCollectorDelivery sends msg from collector to manager to deliver data (records).

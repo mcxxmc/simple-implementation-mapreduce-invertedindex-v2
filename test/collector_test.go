@@ -13,12 +13,9 @@ func TestSingleCollector(t *testing.T) {
 	sender := make(chan *indexing.Msg, indexing.ManagerChanCapacity)
 	collector := indexing.NewCollector(receiver, sender, 1)
 	go collector.Run()
-	totalMessages := 2
 	receiver <- indexing.NewMsgCountFreq(testFilename, 0)  // 1
 	receiver <- indexing.NewMsgSortSave2Disk(savePath, 0)  // 1
-	for i := totalMessages; i > 0; i -- {
-		<- sender
-	}
+	<- sender
 }
 
 func Test2Collectors(t *testing.T) {
@@ -34,22 +31,17 @@ func Test2Collectors(t *testing.T) {
 	go collector1.Run()
 	go collector2.Run()
 
-	totalMessages := 7
 	receiver1 <- indexing.NewMsgCountFreq(testFilename1, 0)  // 1
 	receiver2 <- indexing.NewMsgCountFreq(testFilename2, 0)  // 1
 	receiver2 <- indexing.NewMsgDeliverData(0)  // 2
 
 	msg := <- sender
-	totalMessages--
 	for msg.Typ != indexing.MsgCollectorDelivery {
-		msg = <- sender
-		totalMessages--
+		t.Error("wrong msg type")
 	}
 
 	receiver1 <- indexing.NewMsgCombineFreq(msg.Data.(common.NativeRecords), 0)  // 1
 	receiver2 <- indexing.NewMsgClearData(0)  // 1
 	receiver1 <- indexing.NewMsgSortSave2Disk(savePath, 0)  // 1
-	for i := totalMessages; i > 0; i -- {
-		<- sender
-	}
+	<- sender
 }

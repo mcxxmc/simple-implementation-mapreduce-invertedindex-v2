@@ -45,6 +45,7 @@ func (c *Collector) Run() {
 				}
 				fmt.Println("collector id: ", c.id, " starts counting frequency for: ", job)
 				c.countFreq(job)
+				fmt.Println("collector id: ", c.id, " has finished counting frequency for: ", job)
 
 			case MsgCombineFreq:
 				records, err := msg.Data.(common.NativeRecords)
@@ -54,6 +55,7 @@ func (c *Collector) Run() {
 				}
 				fmt.Println("collector id: ", c.id, " starts combining frequency")
 				c.combineFreq(records)
+				fmt.Println("collector id: ", c.id, " has finished combining frequency")
 
 			case MsgDismissWorker:
 				fmt.Println("collector dismissed, id: ", c.id)
@@ -61,12 +63,13 @@ func (c *Collector) Run() {
 
 			case MsgDeliverData:
 				fmt.Println("collector id: ", c.id, " starts delivering data")
-				newMsg := NewMsgCollectorDelivery(c.records, c.id)
-				c.sender <- newMsg
+				c.sender <- NewMsgCollectorDelivery(c.records, c.id)
+				fmt.Println("collector id: ", c.id, " has finished delivering data")
 
 			case MsgClearData:
 				fmt.Println("collector id: ", c.id, " starts cleaning data")
 				c.records = common.NewNativeRecords()
+				fmt.Println("collector id: ", c.id, " has finished cleaning data")
 
 			case MsgSortAndSave2Disk:
 				savePath, err := msg.Data.(string)
@@ -76,6 +79,8 @@ func (c *Collector) Run() {
 				}
 				fmt.Println("collector id: ", c.id, " starts sorting and saving data")
 				c.sortSave(savePath)
+				fmt.Println("collector id: ", c.id, " has finished sorting and saving data")
+				c.sender <- NewMsgCollectorIOCompleted(c.id)
 
 			default:
 				fmt.Println("unknown message type: ", msg.Typ)

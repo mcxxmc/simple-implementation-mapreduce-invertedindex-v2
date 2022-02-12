@@ -6,7 +6,7 @@ const ManagerChanCapacity = 512
 const MsgCountFreq = 10   // count word frequency in a file
 const MsgCombineFreq = 11 // combine the word frequency from another collector
 
-const MsgCollectorIdle = 50     // msg from collector to show that it is idle
+const MsgCollectorIOCompleted = 50     // msg from collector to show that it has completed the disk IO operation
 const MsgCollectorDelivery = 51 // msg from collector to deliver data
 
 const MsgDismissWorker = 100    // "kill" the collector
