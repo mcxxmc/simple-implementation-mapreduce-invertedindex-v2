@@ -104,7 +104,7 @@ func (c *Collector) countFreq(path string) {
 
 	for _, b := range byt {
 		switch {
-		case b >= '0' && b <= '9' || b == '-' || b >= 'a' && b <= 'z':
+		case b >= '0' && b <= '9' || b >= 'a' && b <= 'z':
 			word += string(b)
 		case b >= 'A' && b <= 'Z':
 			word += string(b + 'a' - 'A')

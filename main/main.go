@@ -18,7 +18,11 @@ func createJobs() []string {
 }
 
 func main() {
-	//preprocess.SplitOriginalTxt()
+	/*
+	if !preprocess.SplitOriginalTxt() {
+		return
+	}
+	*/
 	jobs := createJobs()
 	manager := indexing.NewManager(numOfWorkers)
 	manager.Run(jobs)

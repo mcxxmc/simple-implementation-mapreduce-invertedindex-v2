@@ -12,11 +12,11 @@ const splitSep = "CHAPTER "
 
 // SplitOriginalTxt is used for splitting the original txt by chapters.
 // Note that the index starts from 1.
-func SplitOriginalTxt() {
+func SplitOriginalTxt() bool {
 	byt, err := os.ReadFile(common.PapTxtPath)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return false
 	}
 
 	s := string(byt)
@@ -27,12 +27,15 @@ func SplitOriginalTxt() {
 		if len(str) == 0 {
 			continue
 		}
-		newFilename := common.PapDividedPathPrefix + strconv.Itoa(index) + common.TxtAppendix
+		newFilename := common.PapDividedPathPrefixMain + strconv.Itoa(index) + common.TxtAppendix
 		err = os.WriteFile(newFilename, []byte(str), 0644)
 		if err != nil {
 			fmt.Println("error for index ", index)
 			fmt.Println(err)
+			return false
 		}
 		index ++
 	}
+
+	return true
 }

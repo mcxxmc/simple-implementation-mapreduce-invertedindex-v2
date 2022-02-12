@@ -1,6 +1,6 @@
 package common
 
-const PapTxtPath = "../static/prideAndPrejudice.txt"
+const PapTxtPath = "./static/prideAndPrejudice.txt"
 const PapDividedPathPrefix = "../static/"
 const PapDividedPathPrefixMain = "./static/"
 
