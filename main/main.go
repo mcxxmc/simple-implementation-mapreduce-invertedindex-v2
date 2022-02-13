@@ -1,8 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"simple-implementation-mapreduce-invertedindex-v2/common"
-	"simple-implementation-mapreduce-invertedindex-v2/indexing"
+	"simple-implementation-mapreduce-invertedindex-v2/search"
 	"strconv"
 )
 
@@ -22,8 +23,16 @@ func main() {
 	if !preprocess.SplitOriginalTxt() {
 		return
 	}
-	*/
+	 */
+	/*
 	jobs := createJobs()
 	manager := indexing.NewManager(numOfWorkers)
 	manager.Run(jobs)
+	 */
+	engine, err := search.NewSearchEngine(common.JsonSavePath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	engine.Run()
 }

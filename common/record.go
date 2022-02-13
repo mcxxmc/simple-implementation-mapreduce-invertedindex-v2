@@ -1,9 +1,15 @@
 package common
 
+import "strconv"
+
 // Record the record to be stored on the disk in a JSON file.
 type Record struct {
 	Source string `json:"source"`
 	Freq int `json:"freq"`
+}
+
+func (rec *Record) String() string {
+	return "[ source: " + rec.Source + ", freq: " + strconv.Itoa(rec.Freq) + " ]\n"
 }
 
 func NewRecord(source string, freq int) *Record {
@@ -30,7 +36,7 @@ func NewNativeRecord() NativeRecord {
 
 // NativeRecords the records to be stored by the living collectors.
 //
-// in the form word: []*NativeRecord
+// in the form word: NativeRecord
 type NativeRecords map[string]NativeRecord
 
 func NewNativeRecords() NativeRecords {
