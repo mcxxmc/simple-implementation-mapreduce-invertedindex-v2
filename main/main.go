@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"simple-implementation-mapreduce-invertedindex-v2/common"
-	"simple-implementation-mapreduce-invertedindex-v2/refine"
 	"simple-implementation-mapreduce-invertedindex-v2/search"
 	"strconv"
 )
@@ -32,13 +31,13 @@ func main() {
 	manager.Run(jobs)
 	 */
 
-	/* */
+	/*
 	jobs := createJobs()
 	err := refine.Refine(jobs)
 	if err != nil {
 		fmt.Println(err)
 	}
-
+	 */
 
 	engine, err := search.NewSearchEngine()
 	if err != nil {
