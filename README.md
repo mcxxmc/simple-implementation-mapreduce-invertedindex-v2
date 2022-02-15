@@ -1,4 +1,5 @@
 # simple-implementation-mapreduce-invertedindex-v2
+
  A simple implementation of mapreduce by creating the inverted index 
  of each chapter of Jane Austen's novel Pride and Prejudice. 
  Version 2, in dev, 2022/2/15.
@@ -11,10 +12,12 @@ In general, this project contains 4 parts: the preprocessing, the indexing,
 the refining and the small search engine. It is a complete overhaul of the 
 V1 version and adds more functionalities.
 
-###Preprocessing
+### Preprocessing
+
 It splits the novel by chapters.
 
-###Indexing
+### Indexing
+
 Consisting of 2 parts, the manager and the workers / collectors. There is 1 manager
 and multiple workers (by default of this project 8).
 
@@ -48,11 +51,13 @@ manager; but their share the same channel for sending data / messages to the man
 The initial patches of jobs from the user are also sent to the manager through the
 shared channel.
 
-###Refining
+### Refining
+
 For now，it only creates snapshots. In the future, the Trie tree for vague searching
 or the dictionary of all the related words should go here.
 
-###Search Engine
+### Search Engine
+
 This is a small search engine supporting searching for a multiple set of words.
 It loads multiple JSON files from the disk and stores them in memory. It basically
 uses map structures to speed up its performance.
@@ -65,14 +70,15 @@ chapter).
 Vague searching is not implemented yet. Also, currently, modification of the JSON
 files by the search engine is not allowed.
 
-####Example
+#### Example
+
 Here is an example of the command-line output：
 
 <p align="center">
     <img src="./static/example.png" alt="example"/>
 </p>
 
-###Other
+### Other
 
 The Jane Austen's novel is in the "static" folder, along with seperated
 chapters. The JSON files are also in there.
@@ -86,7 +92,8 @@ different packages and are exclusively used by these packages.
 To run the project, simply run the main file. Reuse the codes in the comments as 
 needed.
 
-###Todo
+### Todo
+
 1. vague search: e.g. auto-correction for typo and suggests related search.
    (this may be achieved by building a Trie tree, calculating words with 
     same characters but in different sequences, or holding a dictionary of 
