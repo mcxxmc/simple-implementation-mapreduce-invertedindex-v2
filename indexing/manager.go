@@ -79,7 +79,7 @@ func (manager *Manager) Run(tasks []string) {
 				fmt.Println("manager receives unknown data type")
 			}
 
-		case <- time.After(time.Second):
+		case <- time.After(time.Second):	// remove the time.After() here to allow the manager to do checking whenever it is idle
 			fmt.Println("manager idle, moving to the next stage; current online workers: ", manager.numOfWorkers)
 
 			if deliveryRequested == deliveryToRequest {
@@ -164,7 +164,7 @@ func (manager *Manager) requestData() {
 func (manager *Manager) requestSortSave2Disk() {
 	record := manager.nextWorker()
 	fmt.Println("manager sends final task to worker ", record.WorkerId)
-	manager.workers[record.WorkerId] <- NewMsgSortSave2Disk(common.JsonSavePath, manager.id)
+	manager.workers[record.WorkerId] <- NewMsgSortSave2Disk(common.InvertedIndexSavePath, manager.id)
 	manager.numOfWorkers --
 }
 
